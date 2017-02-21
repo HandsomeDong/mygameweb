@@ -13,6 +13,8 @@ function reversi_board(canvas, x, y, height, width){
     this.ch_width = width/8;
     this.radius=this.ch_height/2.5;
     this.stat=[];
+    this.black_pos=[this.x+this.width+60, 200-this.radius/2];
+    this.white_pos=[this.x+this.width+60, 300-this.radius/2];
 
     this.draw_board=function (){
         for(var i=0;i<8;i++){
@@ -55,10 +57,7 @@ function reversi_board(canvas, x, y, height, width){
         return {ch_x:parseInt(re_x/this.ch_width), ch_y:parseInt(re_y/this.ch_height)};
     };
 
-    this.score_board=function(){
-        this.ctx.fillStyle='white';
-        this.ctx.fillRect(this.x+this.width+10,0,200,700);
-        this.ctx.fillStyle='black';
+    this.get_score=function () {
         var b_count=0;
         var w_count=0;
         for(var i=0;i<8;i++){
@@ -71,30 +70,51 @@ function reversi_board(canvas, x, y, height, width){
                 }
             }
         }
+        return {black:b_count, white: w_count};
+    };
+
+    this.score_board=function(hand){
+        this.ctx.fillStyle='white';
+        this.ctx.fillRect(this.x+this.width+10,0,200,700);
+        this.ctx.fillStyle='black';
+        var score=this.get_score();
+        var b_count=score['black'];
+        var w_count=score['white'];
         this.ctx.font = "32px serif";
         this.ctx.fillText(b_count+'', this.x+this.width+120, 200);
         this.ctx.beginPath();
-        this.ctx.arc(this.x+this.width+60, 200-this.radius/2, this.radius, 0, Math.PI*2, true);
+        this.ctx.arc(this.black_pos[0], this.black_pos[1], this.radius, 0, Math.PI*2, true);
         this.ctx.fill();
         this.ctx.fillText(w_count+'', this.x+this.width+120, 300);
         this.ctx.beginPath();
-        this.ctx.arc(this.x+this.width+60, 300-this.radius/2, this.radius, 0, Math.PI*2, true);
+        this.ctx.arc(this.white_pos[0], this.white_pos[1], this.radius, 0, Math.PI*2, true);
         this.ctx.stroke();
-
+        if(hand==1){
+            this.ctx.beginPath();
+            this.ctx.arc(this.black_pos[0], this.black_pos[1], this.radius*1.5, 0, Math.PI*2, true);
+            this.ctx.stroke();
+        }else{
+            this.ctx.beginPath();
+            this.ctx.arc(this.white_pos[0], this.white_pos[1], this.radius*1.5, 0, Math.PI*2, true);
+            this.ctx.stroke();
+        }
     };
 
 
     this.draw_board();
-    // this.draw_pieces(3,2,1);
-    // this.draw_pieces(3,3,-1);
-    // this.draw_pieces(3,4,1);
-    // this.draw_pieces(3,5,-1);
-    // this.draw_pieces(3,6,1);
+    // this.draw_pieces(0,7,-1);
+    // this.draw_pieces(1,7,-1);
+    // this.draw_pieces(2,7,-1);
+    // this.draw_pieces(3,7,-1);
+    // this.draw_pieces(4,7,-1);
+    // this.draw_pieces(5,7,-1);
+    // this.draw_pieces(1,6,1);
+    // this.draw_pieces(5,6,1);
     this.draw_pieces(3,3,false);
     this.draw_pieces(3,4,true);
     this.draw_pieces(4,4,false);
     this.draw_pieces(4,3,true);
-    this.score_board();
+    this.score_board(1);
 }
 
 

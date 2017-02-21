@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -384,12 +384,38 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
     __webpack_require__(7);
-    var rev_tool = __webpack_require__(11);
-    var game_obj = __webpack_require__(12);
+    var rev_tool = __webpack_require__(8);
+    var game_obj = __webpack_require__(9);
     $(function () {
+        $('#select-board').modal({
+            keyboard: false,
+            backdrop: 'static'
+        });
+        $('#score-board').modal({
+            keyboard: false,
+            backdrop: 'static',
+            show:false
+        });
+        $('#try-again').on('click',function () {
+            window.location.href='/reversi/';
+        });
         var canvas = document.getElementById('reversi');
         var rb=new rev_tool.reversi_board(canvas, 100,50,400,400);
         var go=new game_obj.reversi_game(rb);
+
+        $('#DL-1').on('click', function () {go.level=5;$('#select-board').modal('hide');});
+        $('#DL-2').on('click', function () {go.level=6;$('#select-board').modal('hide');});
+        $('#DL-3').on('click', function () {go.level=7;$('#select-board').modal('hide');});
+
+        go.end_function=function(){
+            var score=this.rb.get_score();
+            $('#black-c').html(score['black']);
+            $('#white-c').html(score['white']);
+            var title=score['black']>score['white']?'You Win!':'You Lose!';
+            if(score['black']==score['white']) title='Draw!';
+            $('#end-title').html(title);
+            $('#score-board').modal('show');
+        };
 
     })
 }.call(exports, __webpack_require__, exports, module),
@@ -406,7 +432,7 @@ exports = module.exports = __webpack_require__(0)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".modal-dialog {\n  margin-top: 120px;\n}\n.modal-dialog .modal-content .modal-body {\n  padding: 10px 0 10px 0;\n  text-align: center;\n}\n.modal-dialog .modal-content .modal-body button {\n  margin-top: 10px;\n  margin-bottom: 10px;\n  font-size: 25px;\n  width: 150px;\n}\n", ""]);
 
 // exports
 
@@ -439,16 +465,7 @@ if(false) {
 }
 
 /***/ }),
-/* 8 */,
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(3);
-
-
-/***/ }),
-/* 10 */,
-/* 11 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /**
@@ -466,6 +483,8 @@ function reversi_board(canvas, x, y, height, width){
     this.ch_width = width/8;
     this.radius=this.ch_height/2.5;
     this.stat=[];
+    this.black_pos=[this.x+this.width+60, 200-this.radius/2];
+    this.white_pos=[this.x+this.width+60, 300-this.radius/2];
 
     this.draw_board=function (){
         for(var i=0;i<8;i++){
@@ -508,10 +527,7 @@ function reversi_board(canvas, x, y, height, width){
         return {ch_x:parseInt(re_x/this.ch_width), ch_y:parseInt(re_y/this.ch_height)};
     };
 
-    this.score_board=function(){
-        this.ctx.fillStyle='white';
-        this.ctx.fillRect(this.x+this.width+10,0,200,700);
-        this.ctx.fillStyle='black';
+    this.get_score=function () {
         var b_count=0;
         var w_count=0;
         for(var i=0;i<8;i++){
@@ -524,30 +540,51 @@ function reversi_board(canvas, x, y, height, width){
                 }
             }
         }
+        return {black:b_count, white: w_count};
+    };
+
+    this.score_board=function(hand){
+        this.ctx.fillStyle='white';
+        this.ctx.fillRect(this.x+this.width+10,0,200,700);
+        this.ctx.fillStyle='black';
+        var score=this.get_score();
+        var b_count=score['black'];
+        var w_count=score['white'];
         this.ctx.font = "32px serif";
         this.ctx.fillText(b_count+'', this.x+this.width+120, 200);
         this.ctx.beginPath();
-        this.ctx.arc(this.x+this.width+60, 200-this.radius/2, this.radius, 0, Math.PI*2, true);
+        this.ctx.arc(this.black_pos[0], this.black_pos[1], this.radius, 0, Math.PI*2, true);
         this.ctx.fill();
         this.ctx.fillText(w_count+'', this.x+this.width+120, 300);
         this.ctx.beginPath();
-        this.ctx.arc(this.x+this.width+60, 300-this.radius/2, this.radius, 0, Math.PI*2, true);
+        this.ctx.arc(this.white_pos[0], this.white_pos[1], this.radius, 0, Math.PI*2, true);
         this.ctx.stroke();
-
+        if(hand==1){
+            this.ctx.beginPath();
+            this.ctx.arc(this.black_pos[0], this.black_pos[1], this.radius*1.5, 0, Math.PI*2, true);
+            this.ctx.stroke();
+        }else{
+            this.ctx.beginPath();
+            this.ctx.arc(this.white_pos[0], this.white_pos[1], this.radius*1.5, 0, Math.PI*2, true);
+            this.ctx.stroke();
+        }
     };
 
 
     this.draw_board();
-    // this.draw_pieces(3,2,1);
-    // this.draw_pieces(3,3,-1);
-    // this.draw_pieces(3,4,1);
-    // this.draw_pieces(3,5,-1);
-    // this.draw_pieces(3,6,1);
+    // this.draw_pieces(0,7,-1);
+    // this.draw_pieces(1,7,-1);
+    // this.draw_pieces(2,7,-1);
+    // this.draw_pieces(3,7,-1);
+    // this.draw_pieces(4,7,-1);
+    // this.draw_pieces(5,7,-1);
+    // this.draw_pieces(1,6,1);
+    // this.draw_pieces(5,6,1);
     this.draw_pieces(3,3,false);
     this.draw_pieces(3,4,true);
     this.draw_pieces(4,4,false);
     this.draw_pieces(4,3,true);
-    this.score_board();
+    this.score_board(1);
 }
 
 
@@ -556,7 +593,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /**
@@ -574,18 +611,22 @@ var UTILITY_MATRIX = [
     [-8, -24, -4, -3, -3, -4, -24, -8],
     [99, -8, 8, 6, 6, 8, -8, 99]
 ];
+var ALPHABET = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+var LOG=false;
 
 
 function reversi_game(rb){
     this.rb=rb;
     this.role=1;
-    this.best_action={};
+    this.best_action={}
+    this.level=5;
+    this.end_function=null;
     this.available_actions=function(state, role){
         var temp_i=0;
         var temp_j=0;
         var actions={};
-        for(var i=0;i<8;i++) {
-            for (var j = 0; j < 8; j++) {
+        for(var j=0;j<8;j++) {
+            for (var i = 0; i < 8; i++) {
                 if (state[i][j] == 0) {
                     for (var dir = 0; dir < 8; dir++) {
                         var deleted_pieces = [];
@@ -621,26 +662,60 @@ function reversi_game(rb){
     };
     this.actions=this.available_actions(this.rb.stat, this.role);
 
+    this.log=function (name, depth, value, alpha, beta) {
+        if(LOG) {
+            if(name!='pass'&&name!='root') {
+                name = ALPHABET[parseInt(name[0])]+(1 + parseInt(name[1]));
+            }
+            value=value>9999?Infinity:value;
+            value=value<-9999?-Infinity:value;
+            beta=beta>9999?Infinity:beta;
+            alpha=alpha<-9999?-Infinity:alpha;
+            if(depth%2==0){
+                console.log(name, depth, value, alpha, beta);
+            }else{
+                console.log(name, depth, -value, -beta, -alpha);
+            }
+        }
+    };
 
-    this.alpha_beta=function(stat, search_depth, limit_depth, role,alpha, beta){
-        if(search_depth>=limit_depth) return -1*this.cal_utility(stat, this.role);
+    this.alpha_beta=function(stat, search_depth, limit_depth, role,alpha, beta,name){
+        if(search_depth>=limit_depth){
+            var vr=-1*this.cal_utility(stat, role);
+            this.log(name, search_depth, -vr, alpha, beta);
+            return vr;
+        }
         var action=this.available_actions(stat, role);
-        if(action.length==0){
-            return -1*this.alpha_beta(stat,search_depth+1, limit_depth, -1*role, -1*beta,-1*alpha);
+        if(JSON.stringify(action)=='{}'){
+            this.log(name, search_depth, -9999999, alpha, beta);
+            var vp=-1*this.alpha_beta(stat,search_depth+1, limit_depth, -1*role, -1*beta,-1*alpha, 'pass');
+            this.log(name, search_depth, -vp, alpha, beta);
+            return vp;
         }
         var v=-9999999;
-        for(var i in action){
-            var child_stat=this.gen_copy_next(stat,action[i],role);
-            var compare_v =this.alpha_beta(child_stat,search_depth+1, limit_depth, -1*role, -1*beta,-1*alpha);
-            if(v<compare_v){
-                v=compare_v;
-                if(search_depth==0){
-                    this.best_action=action[i];
+        for(var j=0;j<8;j++) {
+            for (var i = 0; i < 8; i++) {
+                var key=''+i+j;
+                if(action.hasOwnProperty(key)) {
+                    this.log(name, search_depth, v, alpha, beta);
+                    var child_stat = this.gen_copy_next(stat, action[key], role);
+                    var child_name = '' + action[key]['x'] + action[key]['y'];
+                    var compare_v = this.alpha_beta(child_stat, search_depth + 1, limit_depth, -1 * role, -1 * beta, -1 * alpha, child_name);
+                    if (v < compare_v) {
+                        v = compare_v;
+                        if (search_depth == 0) {
+                            this.best_action = action[key];
+                        }
+                    }
+                    if (v >= beta) {
+                        this.log(name, search_depth, v, alpha, beta);
+                        return -1 * v;
+                    }
+                    alpha = Math.max(alpha, v);
                 }
             }
-            if(v>=beta) return -1*v;
-            alpha=Math.max(alpha,v);
         }
+        this.log(name, search_depth, v, alpha, beta);
         return -1*v;
     };
 
@@ -681,7 +756,7 @@ function reversi_game(rb){
         var cor = this.rb.cordinate_to_check(x, y);
         if(this.actions[''+cor['ch_x']+cor['ch_y']]&&this.role==1) {
             this.execute_action(this.actions[''+cor['ch_x']+cor['ch_y']]);
-            this.ai_step();
+            this.exec_ai_step();
 
 
         }
@@ -690,20 +765,31 @@ function reversi_game(rb){
 
     this.ai_step=function () {
         this.best_action={};
-        this.alpha_beta(this.rb.stat, 0, 7, this.role,-999999, 999999);
+        this.alpha_beta(this.rb.stat, 0, this.level, this.role,-999999, 999999,'root');
         if(JSON.stringify(this.best_action)=='{}'){
             this.role=this.role*-1;
             this.actions=this.available_actions(this.rb.stat, this.role);
             if(JSON.stringify(this.actions)=='{}'){
-                alert('Game Over');
+                if(this.end_function){
+                    this.end_function();
+                }else{
+                    alert('Game Over');
+                }
             }
             return;
         }
+        // console.log(this.best_action);
         this.execute_action(this.best_action);
         if(JSON.stringify(this.actions)=='{}'){
             this.role=this.role*-1;
-            this.ai_step();
+            this.exec_ai_step();
         }
+    };
+
+
+    this.exec_ai_step=function () {
+        var bind_this=this.ai_step.bind(this);
+        setTimeout(bind_this,10);
     };
 
 
@@ -715,11 +801,15 @@ function reversi_game(rb){
         }
         this.role=this.role*-1;
         this.actions=this.available_actions(this.rb.stat, this.role);
-        this.rb.score_board();
+        this.rb.score_board(this.role);
     };
 
     var ce = this.click_event.bind(this);
     this.rb.canvas.addEventListener('click', ce, false);
+    if(JSON.stringify(this.actions)=='{}'){
+        this.role=this.role*-1;
+        this.ai_step();
+    }
 
 }
 
@@ -731,6 +821,14 @@ function reversi_game(rb){
 module.exports = {
     'reversi_game': reversi_game
 };
+
+
+/***/ }),
+/* 10 */,
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(3);
 
 
 /***/ })

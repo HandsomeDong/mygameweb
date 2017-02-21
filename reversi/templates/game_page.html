@@ -12,6 +12,38 @@
     </div>
 </div>
 
+
+<div id="select-board" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Difficulty Level</h3>
+            </div>
+            <div class="modal-body">
+                <button id="DL-1" class="btn btn-primary">Easy</button><br/>
+                <button id="DL-2" class="btn btn-primary">Medium</button><br/>
+                <button id="DL-3" class="btn btn-primary">Hard</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="score-board" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Game Over</h3>
+            </div>
+            <div class="modal-body">
+                <h2 id="end-title">You win!</h2>
+                <h3>Black: <span id="black-c">0</span></h3>
+                <h3>White: <span id="white-c">0</span></h3>
+                <button id="try-again" class="btn btn-primary">Try Again</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% include "footer.html" %}
 <script src="{% static 'bundles/reversi.bundle.js' %}" ></script>
 </body>
