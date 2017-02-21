@@ -1,0 +1,30 @@
+{
+  "name": "mygameweb",
+  "version": "1.0.0",
+  "description": "lsd first",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "webpack": "^2.2.1"
+  },
+  "devDependencies": {
+    "css-loader": "^0.26.1",
+    "less": "^2.7.2",
+    "less-loader": "^2.2.3",
+    "style-loader": "^0.13.1",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --config mywebpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HandsomeDong/mygameweb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HandsomeDong/mygameweb/issues"
+  },
+  "homepage": "https://github.com/HandsomeDong/mygameweb#readme"
+}

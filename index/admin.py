@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import IndexModule
 
-# Register your models here.
+
+@admin.register(IndexModule)
+class PersonAdmin(admin.ModelAdmin):
+    pass
